@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head>
+	<!-- 文字コードの設定とスタイルシートのリンク -->
+	<meta charset="UTF-8">
+	<title>毎月の収支管理画面</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+	<!-- ページ全体のレイアウトコンテナ -->
+	<div class="layout-container">
+		<!-- 左揃え：統計画面へのリンクを提供するフォーム -->
+		<div class="left-align">
+			<form action="/getStatistics/2" method="get">
+				<input type="submit" value="統計画面へ移動">
+			</form>
+		</div>
+
+		<!-- 右揃え：ユーザー認証情報とログアウトフォーム -->
+		<div class="right-align">
+			<!-- 認証済みユーザーであるかをチェックして表示 -->
+			<div sec:authorize="isAuthenticated()">
+				ユーザー認証済み:
+			</div>
+			<!-- ログインユーザーの名前を表示 -->
+			<div sec:authentication="name">
+				ログイン情報のname値に書き換わる
+			</div>
+			<!-- ログアウトボタン -->
+			<form th:action="@{/logout}" method="post">
+				<input type="submit" value="ログアウト">
+			</form>
+		</div>
+	</div>
+
+	<!-- タイトル表示 -->
+	<h1>毎月の収支管理画面</h1>
+
+	<!-- 説明文。背景を白に、透明度0.4に設定 -->
+	<p class="centered-text" style="background-color: rgba(255, 255, 255, 0.4);">
+		1.テキストボックスに項目を入力し、「追加」ボタンを押して収支を登録してください。<br>
+		2.登録されたデータは「削除」ボタンで削除できます。<br>
+		3.「日時」「項目名」「収支」は、それぞれのボタンを押すことで内容を変更できます。<br>
+		<!-- 赤色で重複の警告メッセージ -->
+		<span style="color: red;">※重複する「項目名」の「追加」や「変更」はできませんのでご注意ください。</span>
+	</p>
+
+	<!-- 月を切り替えるボタン -->
+	<div class="button-group">
+		<button type="button" onclick="location.href='/getIncome/1'">先月</button>
+		<button type="button" onclick="location.href='/getIncome/2'">今月</button>
+		<button type="button" onclick="location.href='/getIncome/3'">来月</button>
+	</div>
+
+	<!-- 現在の年月を表示 -->
+	<div class="date-display">
+		<!-- Thymeleafを使用して日付をフォーマットし、表示 -->
+		<span th:text="${#temporals.format(localDate, 'yyyy年M月')}"></span>
+	</div>
+
+	<!-- 収支のデータを表示するテーブル -->
+	<table id="materialTable" border="1">
+		<thead>
+			<tr bgcolor="silver">
+				<th>日時</th>
+				<th>項目名</th>
+				<th>収支(円)</th>
+				<th>-</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- Thymeleafを使い、収支データをループして表示 -->
+			<tr th:each="income : ${incomes}">
+				<td>
+					<!-- 日付をボタンで表示、モーダルで編集可能 -->
+					<button type="button" class="openModalBtn" data-modal-type="date"
+						th:attr="data-income-date=${income.incomeDate}, data-income-name=${income.incomeName}">
+						<span th:text="${income.incomeDate}">ボタン</span>
+					</button>
+				</td>
+				<td>
+					<!-- 項目名をボタンで表示、モーダルで編集可能 -->
+					<button type="button" class="openModalBtn" data-modal-type="name"
+						th:attr="data-income-name=${income.incomeName}">
+						<span th:text="${income.incomeName}">ボタン</span>
+					</button>
+				</td>
+				<td>
+					<!-- 収支をボタンで表示、金額に応じて色を変更 -->
+					<button type="button" class="openModalBtn" data-modal-type="count"
+						th:attr="data-income-count=${income.incomeCount}, data-income-name=${income.incomeName}"
+						th:style="${income.incomeCount > 0} ? 'background-color: #FF2994;' : 'background-color: #2929FF;'">
+						<span th:text="${income.incomeCount}">ボタン</span>
+					</button>
+				</td>
+				<td>
+					<!-- 削除ボタン -->
+					<form th:action="@{/delete/2}" method="get">
+						<input type="hidden" name="incomeName" th:value="${income.incomeName}">
+						<button type="submit">削除</button>
+					</form>
+				</td>
+			</tr>
+
+			<!-- 新規追加用の入力フォーム -->
+			<tr>
+				<form action="/add/2" method="get">
+					<td><input type="date" id="date" name="date"
+							th:value="${#temporals.format(localDate, 'yyyy-MM-dd')}" required></td>
+					<td><input type="text" id="name" name="name" placeholder="項目名を入力してください" required></td>
+					<td><input type="number" id="count" name="count" placeholder="収支を入力してください" required></td>
+					<td><button type="submit">追加</button></td>
+				</form>
+			</tr>
+		</tbody>
+	</table>
+
+	<!-- モーダルテンプレート（各データを編集するために使用） -->
+	<div class="modal" id="modalTemplate1">
+		<div class="modal-content">
+			<span class="close">&times;</span>
+			<form class="modalForm" method="get">
+				<label for="modalDate" class="modalLabel">日付を入力してください:</label><br>
+				<input type="date" id="modalDate" name="modalDate"><br><br>
+				<input type="hidden" class="hiddenModalData" name="modalData">
+				<input type="submit" value="送信">
+			</form>
+		</div>
+	</div>
+
+	<div class="modal" id="modalTemplate2">
+		<div class="modal-content">
+			<span class="close">&times;</span>
+			<form class="modalForm" method="get">
+				<label for="modalName" class="modalLabel">項目名を入力してください:</label><br>
+				<input type="text" id="modalName" name="modalName"><br><br>
+				<input type="hidden" class="hiddenModalData" name="modalData">
+				<input type="submit" value="送信">
+			</form>
+		</div>
+	</div>
+
+	<div class="modal" id="modalTemplate3">
+		<div class="modal-content">
+			<span class="close">&times;</span>
+			<form class="modalForm" method="get">
+				<label for="modalCount" class="modalLabel">収支を入力してください:</label><br>
+				<input type="number" id="modalCount" name="modalCount"><br><br>
+				<input type="hidden" class="hiddenModalData" name="modalData">
+				<input type="submit" value="送信">
+			</form>
+		</div>
+	</div>
+
+	<!-- JavaScriptでモーダルの開閉を管理 -->
+	<script>
+		// すべての「openModalBtn」クラスを持つボタンを取得して、クリックイベントを設定
+		document.querySelectorAll(".openModalBtn").forEach(button => {
+			button.onclick = function () {
+				// ボタンの「data-modal-type」属性からモーダルの種類を取得（date, name, count）
+				const modalType = this.getAttribute("data-modal-type");
+				// ボタンの「data-income-name」属性から収入名を取得
+				let modalData = this.getAttribute("data-income-name");
+				let actionPath;  // モーダルフォームの送信先URLを格納する変数
+				let modal;  // モーダルのクローンを格納する変数
+
+				// モーダルの種類に応じて処理を分岐
+				switch (modalType) {
+					case "date":
+						// 日付用のモーダルと送信先URLを設定
+						actionPath = `/set/2/1/null/${encodeURIComponent(modalData)}/0`;
+						modal = document.getElementById("modalTemplate1").cloneNode(true);
+						break;
+					case "name":
+						// 項目名用のモーダルと送信先URLを設定
+						actionPath = `/set/2/2/null/${encodeURIComponent(modalData)}/0`;
+						modal = document.getElementById("modalTemplate2").cloneNode(true);
+						break;
+					case "count":
+						// 収支用のモーダルと送信先URLを設定
+						actionPath = `/set/2/3/null/${encodeURIComponent(modalData)}/0`;
+						modal = document.getElementById("modalTemplate3").cloneNode(true);
+				}
+
+				// クローンしたモーダルに一意のIDを設定
+				modal.id = "modal-" + new Date().getTime();
+				// モーダルをページに追加
+				document.body.appendChild(modal);
+
+				// モーダルを表示
+				modal.style.display = "block";
+				// モーダル内の隠しデータフィールドに収入名を設定
+				modal.querySelector(".hiddenModalData").value = modalData;
+				// モーダル内のフォームの送信先URLを設定
+				modal.querySelector(".modalForm").action = actionPath;
+
+				// モーダルの「閉じる」ボタンがクリックされたらモーダルを削除
+				modal.querySelector(".close").onclick = function () {
+					document.body.removeChild(modal);
+				};
+
+				// モーダル外のクリックでモーダルを閉じる処理
+				modal.onclick = function (event) {
+					if (event.target === modal) {
+						document.body.removeChild(modal);
+					}
+				};
+			}
+		});
+	</script>
+
+</bodyy>
+
+</html>

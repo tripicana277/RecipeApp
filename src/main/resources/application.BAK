@@ -1,0 +1,44 @@
+spring.application.name=SpringBootSample
+
+# Thymeleaf設定
+spring.thymeleaf.prefix=classpath:/templates/
+spring.thymeleaf.suffix=.html
+spring.thymeleaf.mode=HTML
+spring.thymeleaf.encoding=UTF-8
+
+#################################################
+# サーバー設定 (Heroku環境ではPORT変数を使用)
+server.port=${PORT}
+
+# サーバー設定 (ローカル環境用)
+# server.port=8080
+#################################################
+
+# データソース設定（Heroku JawsDB MySQL用）
+spring.datasource.url=${JAWSDB_URL}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Tokyo
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# HikariCPの接続プール設定
+spring.datasource.hikari.maximum-pool-size=5
+spring.datasource.hikari.minimum-idle=2
+spring.datasource.hikari.idle-timeout=10000
+spring.datasource.hikari.connection-timeout=20000
+spring.datasource.hikari.max-lifetime=30000
+
+# Spring Bootの起動時にスキーマを自動的にロード
+spring.sql.init.mode=always
+spring.sql.init.schema-locations=classpath:income.sql
+
+# ログイン設定
+spring.security.user.name=admin
+spring.security.user.password=admin
+
+# ログレベルの設定
+logging.level.com.example=INFO
+
+# キャッシュを1年間有効
+spring.web.resources.cache.cachecontrol.max-age=31536000
+spring.resources.cache.cachecontrol.public=true
+
+# スキーマの自動生成（必要に応じて）
+# spring.jpa.hibernate.ddl-auto=update
