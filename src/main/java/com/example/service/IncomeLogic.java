@@ -29,7 +29,8 @@ public class IncomeLogic {
 
         @Override
         public List<Income> execute() throws SQLException {
-            return incomeService.getAll(formattedDate);
+        	return null;
+//        	return incomeService.getAll(formattedDate);
         }
     }
 
@@ -39,7 +40,8 @@ public class IncomeLogic {
 
         @Override
         public Statistics execute() throws SQLException {
-            return incomeService.getStatisticsAll(income);
+        	return null;
+//            return incomeService.getStatisticsAll(income);
         }
     }
 
@@ -50,7 +52,8 @@ public class IncomeLogic {
 
         @Override
         public List<Income> execute() throws SQLException {
-            return incomeService.addOne(formattedDate, income);
+        	return null;
+//            return incomeService.addOne(formattedDate, income);
         }
     }
 
@@ -65,7 +68,8 @@ public class IncomeLogic {
 
         @Override
         public List<Income> execute() throws SQLException {
-            return incomeService.setOne(count, formattedDate, modalDate, modalName, modalCount, income);
+        	return null;
+//            return incomeService.setOne(count, formattedDate, modalDate, modalName, modalCount, income);
         }
     }
 
@@ -76,7 +80,8 @@ public class IncomeLogic {
 
         @Override
         public List<Income> execute() throws SQLException {
-            return incomeService.deleteOne(formattedDate, income);
+        	return null;
+//            return incomeService.deleteOne(formattedDate, income);
         }
     }
 }

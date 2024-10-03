@@ -40,10 +40,10 @@ public class MainController {
 	@GetMapping("/getIncome/{id}")
 	public String getIncome(@PathVariable("id") int id, Model model) throws SQLException {
 		LocalDate localDate = getSessionAdjustedDate(id, 2, false);
-		String formattedDate = localDate.format(yearMonthFormatter);
+//		String formattedDate = localDate.format(yearMonthFormatter);
 
-		List<Income> incomes = incomeLogic.new GetIncomeListLogic(formattedDate).execute();
-		model.addAttribute("incomes", incomes);
+//		List<Income> incomes = incomeLogic.new GetIncomeListLogic(formattedDate).execute();
+//		model.addAttribute("incomes", incomes);
 		model.addAttribute("localDate", localDate);
 
 		return "Income";
