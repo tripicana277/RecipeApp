@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.entity.Components;
-import com.example.entity.Income;
+import com.example.entity.Income2;
 import com.example.entity.Statistics;
 import com.example.service.IncomeLogic;
 import com.example.service.IncomeService;
@@ -40,10 +40,10 @@ public class MainController {
 	@GetMapping("/getIncome/{id}")
 	public String getIncome(@PathVariable("id") int id, Model model) throws SQLException {
 		LocalDate localDate = getSessionAdjustedDate(id, 2, false);
-//		String formattedDate = localDate.format(yearMonthFormatter);
+		String formattedDate = localDate.format(yearMonthFormatter);
 
-//		List<Income> incomes = incomeLogic.new GetIncomeListLogic(formattedDate).execute();
-//		model.addAttribute("incomes", incomes);
+		List<Income2> income2s = incomeLogic.new GetIncomeListLogic(formattedDate).execute();
+		model.addAttribute("incomes", income2s);
 		model.addAttribute("localDate", localDate);
 
 		return "Income";
@@ -54,7 +54,7 @@ public class MainController {
 		LocalDate localDate = getSessionAdjustedDate(id, 2, true);
 		String formattedDate = localDate.format(yearFormatter);
 
-		Statistics statistics = incomeLogic.new GetStatisticsLogic(new Income(formattedDate, null, 0)).execute();
+		Statistics statistics = incomeLogic.new GetStatisticsLogic(new Income2(formattedDate, null, 0)).execute();
 
 		model.addAttribute("allAsset", statistics.getAllAsset() + userSession.getStandardAsset());
 		model.addAttribute("averageIncome", statistics.getAverageIncome());
@@ -74,8 +74,8 @@ public class MainController {
 		LocalDate localDate = getSessionAdjustedDate(id, 2, false);
 		String formattedDate = localDate.format(yearMonthFormatter);
 
-		List<Income> incomes = incomeLogic.new AddIncomeLogic(formattedDate, new Income(date, name, count)).execute();
-		model.addAttribute("incomes", incomes);
+		List<Income2> income2s = incomeLogic.new AddIncomeLogic(formattedDate, new Income2(date, name, count)).execute();
+		model.addAttribute("incomes", income2s);
 		model.addAttribute("localDate", localDate);
 
 		return "Income";
@@ -95,9 +95,9 @@ public class MainController {
 		LocalDate localDate = getSessionAdjustedDate(id, 2, false);
 		String formattedDate = localDate.format(yearMonthFormatter);
 
-		List<Income> incomes = incomeLogic.new SetIncomeLogic(count, formattedDate, modalDate, modalName, modalCount, 
-		                                                     new Income(incomeDate, incomeName, incomeCount)).execute();
-		model.addAttribute("incomes", incomes);
+		List<Income2> income2s = incomeLogic.new SetIncomeLogic(count, formattedDate, modalDate, modalName, modalCount, 
+		                                                     new Income2(incomeDate, incomeName, incomeCount)).execute();
+		model.addAttribute("incomes", income2s);
 		model.addAttribute("localDate", localDate);
 
 		return "Income";
@@ -111,8 +111,8 @@ public class MainController {
 		LocalDate localDate = getSessionAdjustedDate(id, 2, false);
 		String formattedDate = localDate.format(yearMonthFormatter);
 
-		List<Income> incomes = incomeLogic.new DeleteIncomeLogic(formattedDate, new Income(formattedDate, name, 0)).execute();
-		model.addAttribute("incomes", incomes);
+		List<Income2> income2s = incomeLogic.new DeleteIncomeLogic(formattedDate, new Income2(formattedDate, name, 0)).execute();
+		model.addAttribute("incomes", income2s);
 		model.addAttribute("localDate", localDate);
 
 		return "Income";

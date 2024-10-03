@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.entity.Income;
+import com.example.entity.Income2;
 import com.example.entity.Statistics;
 
 import lombok.RequiredArgsConstructor;
@@ -24,64 +24,64 @@ public class IncomeLogic {
 
     // 各ロジックを共通の構造にするためのクラス
     @RequiredArgsConstructor
-    public class GetIncomeListLogic implements IncomeOperation<List<Income>> {
+    public class GetIncomeListLogic implements IncomeOperation<List<Income2>> {
         private final String formattedDate;
 
         @Override
-        public List<Income> execute() throws SQLException {
-        	return null;
-//        	return incomeService.getAll(formattedDate);
+        public List<Income2> execute() throws SQLException {
+//        	return null;
+        	return incomeService.getAll(formattedDate);
         }
     }
 
     @RequiredArgsConstructor
     public class GetStatisticsLogic implements IncomeOperation<Statistics> {
-        private final Income income;
+        private final Income2 income2;
 
         @Override
         public Statistics execute() throws SQLException {
-        	return null;
-//            return incomeService.getStatisticsAll(income);
+//        	return null;
+            return incomeService.getStatisticsAll(income2);
         }
     }
 
     @RequiredArgsConstructor
-    public class AddIncomeLogic implements IncomeOperation<List<Income>> {
+    public class AddIncomeLogic implements IncomeOperation<List<Income2>> {
         private final String formattedDate;
-        private final Income income;
+        private final Income2 income2;
 
         @Override
-        public List<Income> execute() throws SQLException {
-        	return null;
-//            return incomeService.addOne(formattedDate, income);
+        public List<Income2> execute() throws SQLException {
+//        	return null;
+            return incomeService.addOne(formattedDate, income2);
         }
     }
 
     @RequiredArgsConstructor
-    public class SetIncomeLogic implements IncomeOperation<List<Income>> {
+    public class SetIncomeLogic implements IncomeOperation<List<Income2>> {
         private final int count;
         private final String formattedDate;
         private final String modalDate;
         private final String modalName;
         private final int modalCount;
-        private final Income income;
+        private final Income2 income2;
 
         @Override
-        public List<Income> execute() throws SQLException {
-        	return null;
-//            return incomeService.setOne(count, formattedDate, modalDate, modalName, modalCount, income);
+        public List<Income2> execute() throws SQLException {
+//        	return null;
+        	return incomeService.setOne(count, formattedDate, modalDate, modalName, modalCount, income2);
         }
     }
 
     @RequiredArgsConstructor
-    public class DeleteIncomeLogic implements IncomeOperation<List<Income>> {
+    public class DeleteIncomeLogic implements IncomeOperation<List<Income2>> {
         private final String formattedDate;
-        private final Income income;
+        private final Income2 income2;
 
         @Override
-        public List<Income> execute() throws SQLException {
-        	return null;
-//            return incomeService.deleteOne(formattedDate, income);
+        public List<Income2> execute() throws SQLException {
+//        	return null;
+            return incomeService.deleteOne(formattedDate, income2);
         }
     }
 }
