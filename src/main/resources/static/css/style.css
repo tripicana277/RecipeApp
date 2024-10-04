@@ -38,6 +38,36 @@ body {
   text-align: center;
 }
 
+/* 画像の高さだけを指定して、幅は自動調整（アスペクト比を維持） */
+.auto-height-image {
+    width: autopx;  /* 幅は自動調整 */
+    height: 200px;  /* 高さを200pxに設定*/
+}
+.auto-height-image2 {
+    width: autopx;  /* 幅は自動調整 */
+    height: 300px;  /* 高さを200pxに設定*/
+}
+.auto-height-image3 {
+    width: autopx;  /* 幅は自動調整 */
+    height: 100px;  /* 高さを200pxに設定*/
+}
+
+/*.no-wrap {*/
+/*    white-space: nowrap;  改行を防止 */
+/*    display: flex;  横並びに表示 */
+/*    align-items: center;  要素を中央揃え */
+/*}*/
+
+.no-wrap {
+    white-space: nowrap; /* 改行を防止 */
+    align-items: center; /* 要素を中央揃え */
+}
+
+.no-wrap input[type="text"] {
+    width: auto; /* テキストボックスの幅を調整 */
+    box-sizing: border-box; /* テキストボックスのサイズをボーダーやパディングを含むように調整 */
+}
+
 /* 入力フィールド共通スタイル */
 input[type="date"],
 input[type="text"],

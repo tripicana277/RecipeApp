@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>レシピ一覧</title>
+    <!-- ページ全体のスタイルを定義 -->
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body style="color: #421000;">
+	<!-- ページ全体のレイアウトコンテナ -->
+	<div class="layout-container">
+		<!-- 左揃え：統計画面へのリンクを提供するフォーム -->
+		<div class="left-align">
+			<!-- 入力フォームページへ移動するためのフォーム -->
+			<form th:action="@{/addRecipeForm}" method="get">
+			    <input type="submit" value="入力フォームへ移動">
+			</form>
+		</div>
+
+		<!-- 右揃え：ユーザー認証情報とログアウトフォーム -->
+		<div class="right-align">
+			<!-- 認証済みユーザーであるかをチェックして表示 -->
+			<div sec:authorize="isAuthenticated()">
+				ユーザー認証済み:
+			</div>
+			<!-- ログインユーザーの名前を表示 -->
+			<div sec:authentication="name">
+				ログイン情報のname値に書き換わる
+			</div>
+			<!-- ログアウトボタン -->
+			<form th:action="@{/logout}" method="post">
+				<input type="submit" value="ログアウト">
+			</form>
+		</div>
+	</div>
+    <!-- ページの見出し -->
+    <h1>レシピ一覧</h1>
+    <!-- レシピ一覧を表示するテーブル -->
+    <table border="1">
+        <tr bgcolor="silver">
+            <th>レシピ画像</th>
+            <th>レシピ名称</th>
+            <th>レシピ削除</th>
+        </tr>
+
+        <!-- recipeListがnullでなく、かつ空でない場合 -->
+        <tr th:if="${#lists.isEmpty(recipeList)}">
+            <td colspan="3">メニューがありません。</td>
+        </tr>
+
+        <tr th:each="recipe : ${recipeList}">
+            <td>
+                <!-- 画像ファイルが存在する場合 -->
+				<img th:src="@{/uploads/{fileName}(fileName=${recipe.fileName})}" alt="アップロードされた画像" class="auto-height-image" />
+				<!-- 画像がアップロードされていない場合 -->
+                <p th:if="${recipe.fileName == null}">画像がアップロードされていません。</p>
+			</td>
+            <td>
+                <!-- レシピ名称を表示し、クリックで詳細を表示 -->
+                <form th:action="@{/recipe}" method="get">
+                    <input type="submit" th:value="${recipe.recipeName}" name="button" />
+                </form>
+            </td>
+            <td>
+                <!-- レシピを削除するフォーム -->
+                <form th:action="@{/deleteRecipe}" method="post">
+                    <!-- 削除するレシピ名称をhiddenで送信 -->
+                    <input type="hidden" name="delete" th:value="${recipe.recipeName}" />
+                    <button type="submit" onclick="return confirm('本当に削除しますか？');">削除</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

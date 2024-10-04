@@ -1,0 +1,7 @@
+CREATE TABLE `recipemain` (
+  `RECIPENAME` varchar(255) NOT NULL,
+  `FILENAME` varchar(255) DEFAULT NULL,
+  `COMMENT` varchar(255) DEFAULT NULL,
+  `NUMBER` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`RECIPENAME`)
+)

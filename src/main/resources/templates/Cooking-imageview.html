@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>レシピの紹介</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+	<!-- ページ全体のレイアウトコンテナ -->
+	<div class="layout-container">
+		<!-- 左揃え：統計画面へのリンクを提供するフォーム -->
+		<div class="left-align">
+			<form th:action="@{/recipes}" method="get">
+			    <input type="submit" value="レシピ一覧へ移動">
+			</form>
+		</div>
+
+		<!-- 右揃え：ユーザー認証情報とログアウトフォーム -->
+		<div class="right-align">
+			<!-- 認証済みユーザーであるかをチェックして表示 -->
+			<div sec:authorize="isAuthenticated()">
+				ユーザー認証済み:
+			</div>
+			<!-- ログインユーザーの名前を表示 -->
+			<div sec:authentication="name">
+				ログイン情報のname値に書き換わる
+			</div>
+			<!-- ログアウトボタン -->
+			<form th:action="@{/logout}" method="post">
+				<input type="submit" value="ログアウト">
+			</form>
+		</div>
+	</div>
+    <h1>レシピの紹介</h1>
+    <!-- レシピの基本情報を表示するテーブル -->
+    <table border="1">
+        <tr>
+            <th>レシピ名称: 
+                <span th:if="${recipe != null}" th:text="${recipe.recipeName != null ? recipe.recipeName : '名前がありません'}"></span>
+                <span th:if="${recipe == null}">レシピが見つかりません。</span>
+            </th>
+            <th>コメント</th>
+        </tr>
+        <tr class="transparent-table">
+            <td>
+                <!-- 画像ファイルが存在するかチェックし、パスを修正 -->
+				<img th:if="${recipe != null && recipe.fileName != null}" th:src="@{/uploads/{fileName}(fileName=${recipe.fileName})}" alt="アップロードされた画像" class="auto-height-image2" />
+                <p th:if="${recipe == null || recipe.fileName == null}">画像がアップロードされていません。</p>
+            </td>
+            <td th:text="${recipe != null && recipe.comment != null ? recipe.comment : 'コメントがありません'}"></td>
+        </tr>
+    </table>
+
+    <!-- 人数を表示するテーブル -->
+    <table border="1">
+        <tr>
+            <th>人数</th>
+        </tr>
+        <tr class="transparent-table">
+            <td class="centered" th:text="${recipe != null && recipe.number != null ? recipe.number + ' 人分' : '人数がありません'}"></td>
+        </tr>
+    </table>
+
+    <!-- 材料と数量を表示するテーブル -->
+    <table border="1">
+        <tr>
+            <th>材料</th>
+            <th>数量</th>
+        </tr>
+        <tr th:if="${recipe == null || recipe.recipeSubMaterials == null || recipe.recipeSubMaterials.isEmpty()}">
+            <td colspan="2">材料がありません。</td>
+        </tr>
+        <tr th:each="material : ${recipe.recipeSubMaterials}" class="transparent-table">
+            <td th:text="' ・ ' + ${material.material}"></td>
+            <td th:text="${material.quantity}"></td>
+        </tr>
+    </table>
+
+    <!-- 作り方画像と作り方を表示するテーブル -->
+    <table border="1">
+        <tr>
+            <th>作り方画像</th>
+            <th>作り方</th>
+        </tr>
+        <tr th:if="${recipe == null || recipe.recipeSubHowToMakes == null || recipe.recipeSubHowToMakes.isEmpty()}">
+            <td colspan="2">作り方がありません。</td>
+        </tr>
+        <tr th:each="howToMake, iterStat : ${recipe.recipeSubHowToMakes}" class="transparent-table">
+            <td>
+                <!-- 画像ファイルのパスを修正 -->
+                <img th:if="${howToMake.fileName2 != null}" th:src="@{/uploads/{fileName2}(fileName2=${howToMake.fileName2})}" alt="アップロードされた画像" class="auto-height-image3" />
+                <p th:if="${howToMake.fileName2 == null}">画像がアップロードされていません。</p>
+            </td>
+            <td th:text="${iterStat.count} + ' : ' + ${howToMake.howToMake}"></td>
+        </tr>
+    </table>
+</body>
+</html>
