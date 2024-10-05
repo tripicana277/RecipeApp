@@ -1,75 +1,71 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <title>レシピ一覧</title>
-    <!-- ページ全体のスタイルを定義 -->
-	<link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body style="color: #421000;">
-	<!-- ページ全体のレイアウトコンテナ -->
-	<div class="layout-container">
-		<!-- 左揃え：統計画面へのリンクを提供するフォーム -->
-		<div class="left-align">
-			<!-- 入力フォームページへ移動するためのフォーム -->
-			<form th:action="@{/addRecipeForm}" method="get">
-			    <input type="submit" value="入力フォームへ移動">
-			</form>
-		</div>
+    <div class="layout-container" style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+        <!-- 左揃え：入力フォームページへのリンク -->
+        <div class="left-align">
+            <form th:action="@{/addRecipeForm}" method="get">
+                <input type="submit" value="入力フォームへ移動">
+            </form>
+        </div>
+        <!-- 右揃え：ユーザー認証情報とログアウト -->
+        <div class="right-align">
+            <div sec:authorize="isAuthenticated()">
+                <p>ユーザー認証済み: <span sec:authentication="name">ログイン情報</span></p>
+            </div>
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="submit" value="ログアウト">
+            </form>
+        </div>
+    </div>
 
-		<!-- 右揃え：ユーザー認証情報とログアウトフォーム -->
-		<div class="right-align">
-			<!-- 認証済みユーザーであるかをチェックして表示 -->
-			<div sec:authorize="isAuthenticated()">
-				ユーザー認証済み:
-			</div>
-			<!-- ログインユーザーの名前を表示 -->
-			<div sec:authentication="name">
-				ログイン情報のname値に書き換わる
-			</div>
-			<!-- ログアウトボタン -->
-			<form th:action="@{/logout}" method="post">
-				<input type="submit" value="ログアウト">
-			</form>
-		</div>
-	</div>
-    <!-- ページの見出し -->
     <h1>レシピ一覧</h1>
-    <!-- レシピ一覧を表示するテーブル -->
-    <table border="1">
-        <tr bgcolor="silver">
-            <th>レシピ画像</th>
-            <th>レシピ名称</th>
-            <th>レシピ削除</th>
-        </tr>
+    <table border="1" style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr bgcolor="silver">
+                <th>レシピ画像</th>
+                <th>レシピ名称</th>
+                <th>レシピ削除</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- recipeListがnullまたは空の場合 -->
+            <tr th:if="${recipeList == null || #lists.isEmpty(recipeList)}">
+                <td colspan="3">メニューがありません。</td>
+            </tr>
 
-        <!-- recipeListがnullでなく、かつ空でない場合 -->
-        <tr th:if="${#lists.isEmpty(recipeList)}">
-            <td colspan="3">メニューがありません。</td>
-        </tr>
-
-        <tr th:each="recipe : ${recipeList}">
-            <td>
-                <!-- 画像ファイルが存在する場合 -->
-				<img th:src="@{/uploads/{fileName}(fileName=${recipe.fileName})}" alt="アップロードされた画像" class="auto-height-image" />
-				<!-- 画像がアップロードされていない場合 -->
-                <p th:if="${recipe.fileName == null}">画像がアップロードされていません。</p>
-			</td>
-            <td>
-                <!-- レシピ名称を表示し、クリックで詳細を表示 -->
-                <form th:action="@{/recipe}" method="get">
-                    <input type="submit" th:value="${recipe.recipeName}" name="button" />
-                </form>
-            </td>
-            <td>
-                <!-- レシピを削除するフォーム -->
-                <form th:action="@{/deleteRecipe}" method="post">
-                    <!-- 削除するレシピ名称をhiddenで送信 -->
-                    <input type="hidden" name="delete" th:value="${recipe.recipeName}" />
-                    <button type="submit" onclick="return confirm('本当に削除しますか？');">削除</button>
-                </form>
-            </td>
-        </tr>
+            <!-- レシピが存在する場合の処理 -->
+            <tr th:each="recipe : ${recipeList}">
+                <td>
+                    <!-- 画像ファイルの存在確認 -->
+                    <img th:src="@{/uploads/{fileName}(fileName=${recipe.fileName})}" 
+                         alt="アップロードされた画像" 
+                         class="auto-height-image" 
+                         th:if="${recipe.fileName != null && !recipe.fileName.isEmpty()}" />
+                    <p th:if="${recipe.fileName == null || recipe.fileName.isEmpty()}">画像がアップロードされていません。</p>
+                </td>
+                <td>
+                    <!-- レシピ名称で詳細表示 -->
+                    <form th:action="@{/recipe}" method="get">
+                        <input type="submit" th:value="${recipe.recipeName}" name="button" />
+                    </form>
+                </td>
+                <td>
+                    <!-- レシピ削除フォーム -->
+                    <form th:action="@{/deleteRecipe}" method="post">
+                        <input type="hidden" name="delete" th:value="${recipe.recipeName}" />
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" onclick="return confirm('本当に削除しますか？');">削除</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
     </table>
 </body>
 </html>

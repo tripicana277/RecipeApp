@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 public class SecurityConfig {
@@ -13,16 +12,19 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(new AntPathRequestMatcher("/css/**"), new AntPathRequestMatcher("/images/**"), new AntPathRequestMatcher("/uploads/**"), new AntPathRequestMatcher("/login")).permitAll() // CSSファイルやログインページへのアクセスを許可
-                .anyRequest().authenticated() // 他のすべてのリクエストを認証が必要
+                .requestMatchers("/css/**", "/images/**", "/uploads/**", "/login").permitAll() // 静的リソースとログインを許可
+                .anyRequest().authenticated() // それ以外のリクエストは認証が必要
             )
             .formLogin(form -> form
-                .loginPage("/login") // カスタムログインページのパス
-                .defaultSuccessUrl("/recipes", true)  // ログイン成功後のリダイレクト先
-                .permitAll() // 誰でもログインフォームにアクセス可能
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/testpages2", true)
+                .permitAll()
             )
             .logout(logout -> logout
-                .permitAll() // 誰でもログアウトが可能
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout")
+                .permitAll()
             );
         return http.build();
     }
