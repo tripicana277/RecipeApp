@@ -54,7 +54,7 @@ public class MainController {
 	
 	
 	// レシピリストの取得 (GET)
-	@GetMapping("/recipes")
+	@GetMapping("/recipelist")
 	public String getRecipes(Model model) {
 	    try {
 	        logger.debug("レシピの取得処理を開始");
