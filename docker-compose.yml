@@ -9,16 +9,11 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mydb?characterEncoding=UTF-8&serverTimezone=Asia/Tokyo
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root_password
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update # Hibernateを使用してDBスキーマを自動作成
-    restart: always
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    networks:
+      - app-network
     depends_on:
-      mysql:
-        condition: service_healthy  # MySQLのヘルスチェックが成功するまで待機
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      - mysql
 
   mysql:
     image: mysql:8.0
@@ -28,10 +23,9 @@ services:
       MYSQL_DATABASE: mydb
     ports:
       - "3306:3306"
+    networks:
+      - app-network
     volumes:
       - ./mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+networks:
+  app-network:
