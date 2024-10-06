@@ -28,42 +28,26 @@ public class MainController {
 
 	@Autowired
 	private RecipeLogic recipeLogic;
-
 	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
     // ログインページのGETリクエストを処理するメソッド
     @GetMapping("/testpages2")
     public String showLoginPage() {
         // login.htmlを返す
         return "CookingAll";
     }
-	
-	
-	
-	
-	
-	
+
 	// レシピリストの取得 (GET)
-	@GetMapping("/recipelist")
+	@GetMapping("/recipelist2")
 	public String getRecipes(Model model) {
 	    try {
 	        logger.debug("レシピの取得処理を開始");
-//	        List<RecipeMain> recipeList = recipeLogic.getAllRecipes();
-//	        logger.debug("取得したレシピ数: {}", recipeList.size());
-//	        model.addAttribute("recipeList", recipeList);
-//	    } catch (SQLException e) {
-//	        logger.error("SQLエラーが発生しました: {}", e.getMessage(), e);
-//	        return "error";
+	        List<RecipeMain> recipeList = recipeLogic.getAllRecipes();
+	        logger.debug("取得したレシピ数: {}", recipeList.size());
+	        model.addAttribute("recipeList", recipeList);
+	    } catch (SQLException e) {
+	        logger.error("SQLエラーが発生しました: {}", e.getMessage(), e);
+	        return "error";
 	    } catch (Exception e) {
 	        logger.error("予期せぬエラーが発生しました: {}", e.getMessage(), e);
 	        return "error";
